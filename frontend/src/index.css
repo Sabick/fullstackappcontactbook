@@ -1,0 +1,48 @@
+/* src/index.css */
+
+/* Reset some default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Apply a simple font-family and background color */
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;  /* Light gray background */
+    color: #333;               /* Dark text color */
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Style the root container (where the app is rendered) */
+  #root {
+    max-width: 1200px;
+    margin: 0 auto;  /* Center align the app */
+    padding: 20px;
+  }
+  
+  /* Basic styles for headings */
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  ul {
+    list-style-type: none;  /* Remove bullet points */
+    padding: 0;
+  }
+  
+  li {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #fff;  /* White background for each list item */
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Simple shadow effect */
+  }
+  
+  li strong {
+    font-weight: bold;
+  }
+  

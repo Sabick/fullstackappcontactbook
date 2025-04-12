@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Frontend service (Vue.js + Nginx)
+  frontend:
+    build:
+      context: ./frontend  # Path to your frontend directory containing the Dockerfile
+    ports:  
+      - "3001:80"  # Exposing the frontend on port 3031
+    depends_on:
+      - backend  # Ensure that the backend is up before frontend
+    networks:
+      - app-network  # Custom network to communicate with backend and MongoDB
+
+  # Backend service (Node.js)
+  backend:
+    build:
+      context: ./backend  # Path to your backend directory containing the Dockerfile
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/contact_app  # Connection string to MongoDB service
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3002:3002"  # Exposing the backend API on port 3000
+    depends_on:
+      - mongo  # Ensure MongoDB is started before the backend
+    networks:
+      - app-network  # Custom network to communicate with frontend and MongoDB
+
+  # MongoDB service (Database for the backend)
+  mongo:
+    image: mongo:latest  # Using the latest MongoDB image
+    volumes:
+      - mongo-data:/data/db  # Persist MongoDB data in a Docker volume
+    ports:
+      - "27017:27017"  # Expose the MongoDB port
+    networks:
+      - app-network  # Custom network to communicate with backend and frontend
+
+# Define volumes for persistent MongoDB data
+volumes:
+  mongo-data:
+
+# Define custom network for service communication
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,20 @@
+
+
+
+ Old
+import React from 'react';
+import './App.css';
+import ContactList from './components/ContactList';
+import AddContact from './components/AddContact';
+
+function App() {
+  return (
+    <div className="App">
+      <h1>Welcome to the Contact App</h1>
+    //   <AddContact />  {/* ✅ Add this line to render the component */}
+      <ContactList />
+    </div>
+  );
+}
+
+export default App;
