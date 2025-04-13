@@ -5,7 +5,7 @@ pipeline {
         DOCKER_HOST = "tcp://docker:2376"
         DOCKER_TLS_VERIFY = "1"
         DOCKER_CERT_PATH = "/certs/client"
-        COMPOSE_FILE = 'docker-compose.yml'
+        COMPOSE_FILE = "/workspace/docker-compose.yml"
     }
 
     stages {
@@ -25,10 +25,9 @@ pipeline {
 
         stage('Install Docker Compose') {
             steps {
-                echo 'Installing Docker Compose...'
+                echo 'Installing Docker Compose if not available...'
                 sh '''
-                    if ! command -v docker-compose &> /dev/null
-                    then
+                    if ! command -v docker-compose &> /dev/null; then
                         curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
                         chmod +x /usr/local/bin/docker-compose
                     fi
@@ -52,15 +51,15 @@ pipeline {
 
         stage('Verify Services') {
             steps {
-                echo 'Checking running services...'
-                sh 'docker-compose ps'
+                echo 'Listing running containers...'
+                sh 'docker-compose -f $COMPOSE_FILE ps'
             }
         }
     }
 
     post {
         always {
-            echo 'Cleaning up workspace (not stopping containers)...'
+            echo 'Cleaning up Jenkins workspace (not containers)...'
             cleanWs()
         }
     }
