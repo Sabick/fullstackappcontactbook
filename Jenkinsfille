@@ -9,7 +9,16 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checking out source code...'
-                checkout scm
+
+                // This will work with a public repo, and will also use credentials if needed
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']], // Change to your actual branch name if not 'main'
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/Sabick/fullstackappcontactbook.git',
+                        credentialsId: 'github-access' // Optional: remove if not using token
+                    ]]
+                ])
             }
         }
 
