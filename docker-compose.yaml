@@ -4,44 +4,79 @@ services:
   # Frontend service (Vue.js + Nginx)
   frontend:
     build:
-      context: ./frontend  # Path to your frontend directory containing the Dockerfile
+      context: ./frontend
     ports:  
-      - "3001:80"  # Exposing the frontend on port 3031
+      - "3001:80"
     depends_on:
-      - backend  # Ensure that the backend is up before frontend
+      - backend
     networks:
-      - app-network  # Custom network to communicate with backend and MongoDB
+      - app-network
 
   # Backend service (Node.js)
   backend:
     build:
-      context: ./backend  # Path to your backend directory containing the Dockerfile
+      context: ./backend
     environment:
-      - MONGO_URI=mongodb://mongo:27017/contact_app  # Connection string to MongoDB service
+      - MONGO_URI=mongodb://mongo:27017/contact_app
     env_file:
       - ./backend/.env
     ports:
-      - "3002:3002"  # Exposing the backend API on port 3000
+      - "3002:3002"
     depends_on:
-      - mongo  # Ensure MongoDB is started before the backend
+      - mongo
     networks:
-      - app-network  # Custom network to communicate with frontend and MongoDB
+      - app-network
 
-  # MongoDB service (Database for the backend)
+  # MongoDB service
   mongo:
-    image: mongo:latest  # Using the latest MongoDB image
+    image: mongo:latest
     volumes:
-      - mongo-data:/data/db  # Persist MongoDB data in a Docker volume
+      - mongo-data:/data/db
     ports:
-      - "27017:27017"  # Expose the MongoDB port
+      - "27017:27017"
     networks:
-      - app-network  # Custom network to communicate with backend and frontend
+      - app-network
 
-# Define volumes for persistent MongoDB data
+  # Jenkins Controller
+  jenkins:
+    build: ./jenkinsController
+    container_name: jenkinsController
+    user: root
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+    depends_on:
+      - docker
+    networks:
+      - app-network
+
+  # Docker-in-Docker (DinD) service
+  docker:
+    image: docker:dind
+    container_name: jenkins-docker
+    privileged: true
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      - jenkins-data:/var/jenkins_home
+    networks:
+      - app-network
+    ports:
+      - "2376:2376"
+
 volumes:
   mongo-data:
+  jenkins-data:
+  jenkins-docker-certs:
 
-# Define custom network for service communication
 networks:
   app-network:
     driver: bridge
