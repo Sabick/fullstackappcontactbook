@@ -9,16 +9,27 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checking out source code...'
-
-                // This will work with a public repo, and will also use credentials if needed
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: '*/main']], // Change to your actual branch name if not 'main'
+                    branches: [[name: '*/main']],
                     userRemoteConfigs: [[
                         url: 'https://github.com/Sabick/fullstackappcontactbook.git',
-                        credentialsId: 'github-access' // Optional: remove if not using token
+                        credentialsId: 'github-access'
                     ]]
                 ])
+            }
+        }
+
+        stage('Install Docker Compose') {
+            steps {
+                echo 'Installing Docker Compose...'
+                sh '''
+                    if ! command -v docker-compose &> /dev/null
+                    then
+                        curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                        chmod +x /usr/local/bin/docker-compose
+                    fi
+                '''
             }
         }
 
