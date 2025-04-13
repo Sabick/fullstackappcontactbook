@@ -2,6 +2,9 @@ pipeline {
     agent any
 
     environment {
+        DOCKER_HOST = "tcp://docker:2376"
+        DOCKER_TLS_VERIFY = "1"
+        DOCKER_CERT_PATH = "/certs/client"
         COMPOSE_FILE = 'docker-compose.yml'
     }
 
@@ -36,14 +39,14 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker containers...'
-                sh 'docker-compose build'
+                sh 'docker-compose -f $COMPOSE_FILE build'
             }
         }
 
         stage('Run Docker Containers') {
             steps {
                 echo 'Starting application containers...'
-                sh 'docker-compose up -d'
+                sh 'docker-compose -f $COMPOSE_FILE up -d'
             }
         }
 

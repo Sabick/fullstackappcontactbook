@@ -1,6 +1,43 @@
 version: '3.8'
 
 services:
+  # Frontend service (Vue.js + Nginx)
+  frontend:
+    build:
+      context: ./frontend
+    ports:  
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # Backend service (Node.js)
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/contact_app
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  # MongoDB service
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+  # Jenkins Controller
   jenkins:
     build: ./jenkinsController
     container_name: jenkinsController
@@ -20,6 +57,7 @@ services:
     networks:
       - app-network
 
+  # Docker-in-Docker (DinD) service
   docker:
     image: docker:dind
     container_name: jenkins-docker
@@ -29,12 +67,13 @@ services:
     volumes:
       - jenkins-docker-certs:/certs/client
       - jenkins-data:/var/jenkins_home
-    ports:
-      - "2376:2376"
     networks:
       - app-network
+    ports:
+      - "2376:2376"
 
 volumes:
+  mongo-data:
   jenkins-data:
   jenkins-docker-certs:
 
