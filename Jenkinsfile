@@ -12,6 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checking out source code...'
+                 echo 'Cloning repository...'
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],

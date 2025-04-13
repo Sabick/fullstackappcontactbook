@@ -32,6 +32,8 @@ services:
       - jenkins-data:/var/jenkins_home
     ports:
       - "2377:2376"
+      - "3001:3001"  # Frontend
+      - "3002:3002"  # Backend
     networks:
       - app-network
 
