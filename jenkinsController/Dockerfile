@@ -1,6 +1,6 @@
 FROM jenkins/jenkins:2.492.3-jdk17
 USER root
-RUN apt-get update && apt-get install -y lsb-release && apt-get install -y curl
+RUN apt-get update && apt-get install -y lsb-release && apt-get install -y curl && apt-get install -y git
 RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
   https://download.docker.com/linux/debian/gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) \
