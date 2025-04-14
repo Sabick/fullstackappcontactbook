@@ -2,23 +2,24 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HOST = "tcp://docker:2376"  // Docker-in-Docker communication
+        DOCKER_HOST = "tcp://docker:2376"
         DOCKER_TLS_VERIFY = "1"
         DOCKER_CERT_PATH = "/certs/client"
-        COMPOSE_FILE = "/workspace/docker-compose.app.yml"  // Ensure correct path to your app's docker-compose file
+        COMPOSE_FILE = "/workspace/docker-compose.yml"
     }
 
     stages {
         stage('Checkout') {
             steps {
                 echo 'Checking out source code...'
-                checkout([ 
-                    $class: 'GitSCM', 
-                    branches: [[name: '*/main']], 
-                    userRemoteConfigs: [[ 
-                        url: 'https://github.com/Sabick/fullstackappcontactbook.git', 
-                        credentialsId: 'github-access' 
-                    ]] 
+                 echo 'Cloning repository...'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/Sabick/fullstackappcontactbook.git',
+                        credentialsId: 'github-access'
+                    ]]
                 ])
             }
         }
@@ -38,27 +39,21 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker containers...'
-                sh """
-                    docker-compose -f $COMPOSE_FILE build
-                """
+                sh 'docker-compose -f $COMPOSE_FILE build'
             }
         }
 
         stage('Run Docker Containers') {
             steps {
                 echo 'Starting application containers...'
-                sh """
-                    docker-compose -f $COMPOSE_FILE up -d
-                """
+                sh 'docker-compose -f $COMPOSE_FILE up -d'
             }
         }
 
         stage('Verify Services') {
             steps {
                 echo 'Listing running containers...'
-                sh """
-                    docker-compose -f $COMPOSE_FILE ps
-                """
+                sh 'docker-compose -f $COMPOSE_FILE ps'
             }
         }
     }

@@ -4,8 +4,8 @@ services:
   frontend:
     build:
       context: ./frontend
-    ports:
-      - "3001:80"  # Map frontend port
+    ports:  
+      - "3001:80"
     depends_on:
       - backend
     networks:
@@ -19,7 +19,7 @@ services:
     env_file:
       - ./backend/.env
     ports:
-      - "3002:3002"  # Map backend port
+      - "3002:3002"
     depends_on:
       - mongo
     networks:
@@ -30,7 +30,7 @@ services:
     volumes:
       - mongo-data:/data/db
     ports:
-      - "27017:27017"  # MongoDB port
+      - "27017:27017"
     networks:
       - app-network
 

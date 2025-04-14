@@ -6,8 +6,8 @@ services:
     container_name: jenkinsController
     user: root
     ports:
-      - "8081:8080"  # Jenkins UI
-      - "50000:50000"  # Jenkins agent port
+      - "8081:8080"       # Jenkins UI
+      - "50000:50000"     # Jenkins agent port
     environment:
       - DOCKER_HOST=tcp://docker:2376
       - DOCKER_CERT_PATH=/certs/client
@@ -15,7 +15,7 @@ services:
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-docker-certs:/certs/client:ro
-      - ./:/workspace  # Mount your fullstack app
+      - ./:/workspace              # Mount your fullstack app
     depends_on:
       - docker
     networks:
@@ -31,9 +31,9 @@ services:
       - jenkins-docker-certs:/certs/client
       - jenkins-data:/var/jenkins_home
     ports:
-      - "2377:2376"  # Docker port for communication with Jenkins
-      - "3001:3001"  # Frontend port (for app)
-      - "3002:3002"  # Backend port (for app)
+      - "2377:2376"
+      - "3001:3001"  # Frontend
+      - "3002:3002"  # Backend
     networks:
       - app-network
 
